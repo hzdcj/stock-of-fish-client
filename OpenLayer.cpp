@@ -1,29 +1,9 @@
 ﻿#include"OpenLayer.h"
 #include<WinSock2.h>
+#include"CursorTextField.h"
 USING_NS_CC;
-typedef enum
-{
-	ACTION_QUERY,
-	ACTION_REMOVE,
-	ACTION_ADD,
-	ACTION_MOD
-}ACTION_TYPES;
-__String* returnJSONString;
 string OpenLayer::localIpAddress;
-
-size_t callback(void *ptr, size_t size, size_t number, void *stream)
-{
-	log("%s", ptr);
-	std::string temp = (char*)ptr;
-	if (returnJSONString == nullptr) {
-		returnJSONString = __String::create(temp);
-	}
-	else {
-		returnJSONString->append(temp);
-	}
-	return size * number;//这里一定要返回实际返回的字节数  
-}
-
+string OpenLayer::socketIoIp;
 bool OpenLayer::init()
 {
 	Size winSize = Director::getInstance()->getWinSize();
@@ -57,8 +37,13 @@ bool OpenLayer::init()
 	menuItem_5->setTag(105);
 	menuItem_5->setPosition(Vec2(winSize.width -100, winSize.height-100));
 
+	auto label_6 = Label::createWithTTF(SceneManger::WStrToUTF8(L"服务器地址"), "fj3.ttf", 30);
+	label_6->enableOutline(Color4B::BLUE, 3);
+	MenuItemLabel *menuItem_6 = MenuItemLabel::create(label_6, CC_CALLBACK_1(OpenLayer::menuCallBack, this));
+	menuItem_6->setTag(108);
+	menuItem_6->setPosition(Vec2(winSize.width - 100, 100));
 
-	menu = Menu::create(menuItem, menuItem_2, menuItem_3, menuItem_4, menuItem_5, NULL);
+	menu = Menu::create(menuItem, menuItem_2, menuItem_3, menuItem_4, menuItem_5, menuItem_6, NULL);
 	menu->setPosition(Point::ZERO);
 	menu->setTag(10);
 	this->addChild(menu,1);
@@ -178,16 +163,27 @@ bool OpenLayer::init()
 	rain->setEmissionRate(300);
 	rain->setLife(4.0f);
 
+	m_pCursorInputLayer = CursorTextField::textFieldWithPlaceHolder(this, "click and input",
+		"fj3.ttf", 40);
+	m_pCursorInputLayer->setInputWidth(winSize.width);
+	m_pCursorInputLayer->setPosition(Vec2(winSize.width / 2, 50));
+	this->addChild(m_pCursorInputLayer);
 
-	_sioClient = SocketIO::connect("http://10.4.62.100:3000/", *this);
-	_sioClient->on("createCallBack", CC_CALLBACK_2(OpenLayer::createCallBack, this));
-	_sioClient->on("callConnect", CC_CALLBACK_2(OpenLayer::callConnect, this));
+	//string aaa = "http://"+socketIoIp+":3000/";
+
+	//_sioClient = SocketIO::connect("http://10.4.62.100:3000/", *this);
+	////_sioClient = SocketIO::connect(aaa, *this);
+	//_sioClient->on("createCallBack", CC_CALLBACK_2(OpenLayer::createCallBack, this));
+	//_sioClient->on("callConnect", CC_CALLBACK_2(OpenLayer::callConnect, this));
 
 	label4 = NULL;
 	label2 = Label::createWithSystemFont("", "Times New Roman", 30);
 	label2->setPosition(Vec2(winSize.width *0.9, 400));
-	this->addChild(label2, 5);
+	label3 = Label::createWithSystemFont("", "Times New Roman", 30);
+	label3->setPosition(Vec2(winSize.width *0.9, 50));
 
+	this->addChild(label2, 5);
+	this->addChild(label3, 5);
 	return true;
 
 }
@@ -270,8 +266,23 @@ void OpenLayer::menuCallBack(Ref *pSender)
 				break;
 	}
 	case 106:
-		_sioClient->emit("findAll", getLocalAddress());
+	{
+				_sioClient->emit("findAll", getLocalAddress());
+				break;
 	}
+	case 108:
+	{
+				string aaa = m_pCursorInputLayer->getInputText();
+				label3->setString(aaa);
+				socketIoIp= "http://" + aaa + ":3000/";
+				_sioClient = SocketIO::connect(socketIoIp, *this);
+				_sioClient->on("createCallBack", CC_CALLBACK_2(OpenLayer::createCallBack, this));
+				_sioClient->on("callConnect", CC_CALLBACK_2(OpenLayer::callConnect, this));
+				CCLOG("%s", socketIoIp.c_str());
+	}
+	}
+	
+    
 }
 void OpenLayer::updateTimesPerSecond(float delta)
 {

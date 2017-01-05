@@ -78,7 +78,6 @@ bool SocketClient::connectServer(const char* serverIP, unsigned short port)
 	{
 		_socektClient = 0;
 		log("connect Server error");
-		log("%d",WSAGetLastError());
 		return false;
 	}
 

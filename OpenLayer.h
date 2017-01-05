@@ -5,6 +5,7 @@
 USING_NS_CC;
 using namespace cocos2d::network;
 using namespace CocosDenshion;
+class CursorTextField;
 class OpenLayer :public Layer,public SocketIO::SIODelegate
 {
 public:
@@ -12,16 +13,19 @@ public:
 	virtual bool init();
 	void menuCallBack(Ref *psender);
 	void updateTimesPerSecond(float);
-	void httpRequest(const char*param, int action);
 	string getLocalAddress();
 public:
 	SceneManger *tsm;
 	static string localIpAddress;
+	static string socketIoIp;
+	CursorTextField *m_pCursorInputLayer;
 private:
 	Menu *menu;
 	int action;
 	Label *label4;
 	Label *label2;
+	Label *label3;
+
 
 	virtual void onConnect(cocos2d::network::SIOClient* client);
 	virtual void onMessage(cocos2d::network::SIOClient* client, const std::string& data);
