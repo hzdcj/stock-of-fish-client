@@ -16,7 +16,7 @@ float FishLayer::rotationSpeed = 2.5;
 
 bool FishLayer::init()
 { 
-	_timeLost = 3 + level * 1;
+	_timeLost = 30 + level * 15;
 	qipao = NULL;
 	lightFishCall = false;
 	_connected = false;
@@ -625,7 +625,7 @@ void FishLayer::initClient()
 	_client = SocketClient::construct();
 	const char *farIpAddress = GameLayer::farIpAddress.c_str();
 	const char *localIpAddrss = OpenLayer::localIpAddress.c_str();
-	thread th(&FishLayer::connectServer, this, localIpAddrss);
+	thread th(&FishLayer::connectServer, this, farIpAddress);
 	th.detach();
 }
 void FishLayer::connectServer(const char *IpAddress)

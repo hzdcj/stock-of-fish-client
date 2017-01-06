@@ -230,7 +230,7 @@ void OpenLayer::menuCallBack(Ref *pSender)
 	case 104:
 	{
 				menu->setVisible(false);
-				Label *label2 = Label::createWithTTF(SceneManger::WStrToUTF8(L"用摇杆来控制大鱼去吃小鱼，\n小鱼会巧妙运用鱼群的特性来躲避，\n需要在左上角规定的时间内吃满右上角要求的数目，\n满足数目后即可进入下一关，\n注意不要被落下的泡泡砸中，砸中会少血哦，\n如果去吃掉泡泡的话也可以回少量血，\n同时右下角还有技能可以使用，\n通过一关可以解锁一个技能哦！"), "fj3.ttf", 30);
+				Label *label2 = Label::createWithTTF(SceneManger::WStrToUTF8(L"用摇杆来控制大鱼躲避鲨鱼，\n小鱼也会巧妙运用鱼群的特性来躲避，\n需要在左上角规定的时间内防止鲨鱼吃满右上角要求的数目，\n没有满足数目后即获得本关胜利，\n注意不要被落下的泡泡砸中，砸中会少血哦，\n同时右下角还有技能可以使用，引导小鱼躲避哦！\n"), "fj3.ttf", 30);
 				label2->setPosition(Vec2(winSize.width / 2 + 50, winSize.height*0.6));
 				label2->setColor(Color3B(0, 0, 0));
 				label2->setLineHeight(50);
